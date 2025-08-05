@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: "postgresql" #QLC sẽ hiểu cú pháp của PostgreSQL
+    queries: "./db/query" #Folder chứa các file .sql query
+    schema: "./db/migration" #Folder chứa schema .sql (CREATE TABLE ...)
+    gen:
+      go:
+        package: "sqlc" #Tên package được generate (nên trùng với tên thư mục out)
+        out: "./db/sqlc" # folder luu tru cac file duoc generate code
+        sql_package: "pgx/v5"
+        emit_json_tags: true
