@@ -11,37 +11,20 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-//  Interface `DBTX` là **giao diện trừu tượng chung** để đại diện cho:
-//   - `*pgx.Conn` (kết nối thường)
-//   - `pgx.Tx` (transaction)
-
-// Tức là mọi object nào có thể chạy `Exec`, `Query`, `QueryRow` đều có thể gắn vào `Queries`.
 type DBTX interface {
 	Exec(context.Context, string, ...interface{}) (pgconn.CommandTag, error)
 	Query(context.Context, string, ...interface{}) (pgx.Rows, error)
 	QueryRow(context.Context, string, ...interface{}) pgx.Row
 }
 
-// Hàm New(...) tạo ra một biến *Queries, có thể gọi các hàm như GetAccount, InsertUser, v.v.
-// Dùng như sau:
-// dbpool, _ := pgxpool.New(ctx, dsn)
-// queries := sqlc.New(dbpool) // dbpool thỏa DBTX
-// Tạo Queries từ kết nối thường
 func New(db DBTX) *Queries {
 	return &Queries{db: db}
 }
 
-// - `Queries` là struct chính chứa các hàm query (được sinh từ file `.sql`)
-// - Biến `db` bên trong có thể là:
-//   - Kết nối thường: `*pgx.Conn` hoặc `*pgxpool.Pool`
-//   - Transaction: `pgx.Tx`
 type Queries struct {
 	db DBTX
 }
 
-// Khi bạn muốn chạy truy vấn trong transaction, bạn cần dùng WithTx.
-// pgx.Tx cũng implement DBTX, nên bạn có thể gắn nó vào Queries.
-// Tạo Queries dùng trong transaction
 func (q *Queries) WithTx(tx pgx.Tx) *Queries {
 	return &Queries{
 		db: tx,
