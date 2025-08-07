@@ -5,11 +5,11 @@ import (
 	"log"
 	"os"
 	"testing"
-
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var testQueries *Queries
+var conn *pgxpool.Pool
 
 const (
 	dbDriver = "postgres"
@@ -19,7 +19,8 @@ const (
 // diem vao chinh cho tat ca cac bai test golang cu the trong 1 package, o day la sqlc
 func TestMain(m *testing.M) {
 	ctx := context.Background()
-	conn, err := pgxpool.New(ctx, dbSource)
+	var err error
+	conn, err = pgxpool.New(ctx, dbSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
