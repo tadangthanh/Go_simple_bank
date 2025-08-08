@@ -20,7 +20,7 @@ type Entry struct {
 	ID        int64 `json:"id"`
 	AccountID int64 `json:"account_id"`
 	// có thể âm hoặc dương
-	Amount    pgtype.Numeric   `json:"amount"`
+	Amount    int64            `json:"amount"`
 	CreatedAt pgtype.Timestamp `json:"created_at"`
 }
 
